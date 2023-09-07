@@ -11,7 +11,7 @@ const dbConnection = async () => {
         }
 
         console.log('DB params:', dbParams);
-        await mongoose.connect('mongodb+srv://jadahego:WMNOupvbGnSdfAUJ@micluster.oyyhvvz.mongodb.net/jafeddb', dbParams);
+        await mongoose.connect(process.env.MONGODB_ATLAS, dbParams);
 
         console.log('base de datos online');
 
