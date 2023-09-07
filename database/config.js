@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 
-const dbConnection = async() => {
+const dbConnection = async () => {
 
     try {
-        await mongoose.connect(process.env.MONGODB_ATLAS, {
+        const dbParams = {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
             useFindAndModify: false
+        }
 
-        });
+        console.log('DB params:', dbParams);
+        await mongoose.connect(process.env.MONGODB_ATLAS, dbParams);
 
         console.log('base de datos online');
 
