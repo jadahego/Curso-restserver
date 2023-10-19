@@ -13,7 +13,7 @@ const { usuariosGet,
 //const { esAdminRole, tieneRole } = require('../middlewares/validar-roles');
 const {validarCampos, validarJWT, tieneRole} = require('../middlewares')
 
-const {esRoleValido, emailExiste, existeUsuarioPorId} = require('../helpers/db-validators');
+const {esRoleValido, passwordExiste, existeUsuarioPorId} = require('../helpers/db-validators');
 
 
 
@@ -32,12 +32,13 @@ router.put('/:id', [
 ], usuariosPut);
 
 router.post('/',[
+
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-        check('password', 'El password es obligatorio y mas de 6 letras').isLength({min: 6}),
-        check('correo', 'El correo no es valido').isEmail(),
-        //check('rol', 'No es un rol valido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
-        check('correo').custom( emailExiste ),
-        check('rol').custom( esRoleValido ),
+        check('cedula', 'El numero de identificcion es obligatorio y mas de 6 numeros').isLength({min: 6}),
+        //check('correo', 'El correo no es valido').isEmail(),
+        //check('rol', 'No es un rol valido').isIn(['VOTANTE_ROLE']),
+        //check('documento').custom( passwordExiste ),
+        //check('rol').custom( esRoleValido ),
         validarCampos,
 ], usuariosPost);
 

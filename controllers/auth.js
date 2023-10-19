@@ -9,30 +9,30 @@ const { googleVerify } = require('../helpers/google-verify');
 
 const login = async (req, res = response) => {
 
-    const {correo, password} = req.body;
+    const {nombre, documento} = req.body;
 
     try {
         
-        // verificar si el email existe
-        const usuario = await Usuario.findOne({correo});
+        // verificar si el nombre existe
+        const usuario = await Usuario.findOne({nombre});
         if (!usuario){
             return res.status(400).json({
-                msg: 'Usuario / password no son correctos - correo '
+                msg: 'Usuario / password no son correctos - nombre '
             })
         }
 
         // si el usuario esta activo
         if (!usuario.estado){
             return res.status(400).json({
-                msg: 'Usuario / password no son correctos - estado: false '
+                msg: 'Usuario /  no son correctos - estado: false '
             })
         }
 
         // verificar contraseña
-        const validPassword = bcryptjs.compareSync(password, usuario.password);
-        if (!validPassword){
+        const validDocumento = await Usuario.findOne({documento});
+        if (!validDocumento){
             return res.status(400).json({
-                msg: 'Usuario / password no son correctos - password '
+                msg: 'Usuario / documento no son correctos - documento '
             })
         }
         // general el jwt
@@ -97,7 +97,20 @@ const login = async (req, res = response) => {
         }
    }
 
+   const renovarToken = async (req, res = response) => {
+        const {usuario} = req;
+
+        // general el jwt
+        const token = await generarJWT(usuario.id);
+
+        res.json({
+            usuario,
+            token
+        })
+   }
+
 module.exports = {
     login,
-    googleSignIn
+    googleSignIn,
+    renovarToken
 }

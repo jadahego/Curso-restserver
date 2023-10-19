@@ -1,5 +1,6 @@
 const Role = require('../models/role')
-const {Usuario, Categoria, Producto} = require('../models')
+const {Usuario, Categoria, Producto} = require('../models');
+const { response } = require('express');
 
 
 const esRoleValido = async (rol = '') =>{
@@ -9,12 +10,13 @@ const esRoleValido = async (rol = '') =>{
     }
 }
 
-const emailExiste = async (correo = '') => {
+const passwordExiste = async (documento ='') => {
+
     //verificar si el correo existe
-    const existeEmail = await Usuario.findOne({correo});
-    if (existeEmail){
-        throw new Error(`El correo ${correo} ya existe`)
-    }
+    const existePassword = await Usuario.findOne({documento});
+    if (existePassword){
+        throw new Error(`El documento ${documento} ya existe`) 
+        }
 }
 
 const existeUsuarioPorId = async (id = '') => {
@@ -63,7 +65,7 @@ const coleccionesPermitidas = (coleccion = '', colecciones = []) => {
 
 module.exports = {
     esRoleValido,
-    emailExiste,
+    passwordExiste,
     existeUsuarioPorId,
     existeCategoriaPorId,
     existeProductoPorId,

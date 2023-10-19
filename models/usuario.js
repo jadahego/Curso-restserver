@@ -1,44 +1,23 @@
 
-const {Schema, model} = require('mongoose');
+const DataTypes = require('sequelize');
+const { dbConnection } = require('../database/config');
 
-const UsuarioSchema = Schema({
+const Usuario = dbConnection.define('personas', {
     nombre: {
-        type: String,
-        required: [true, 'El nombre es obligatorio']
+        type: DataTypes.STRING
     },
-    correo:{
-        type: String,
-        required: [true, 'El correo es requerido'],
-        unique: true
+    apellido: {
+        type: DataTypes.STRING
     },
-    password:{
-        type: String,
-        required: [true, 'La contraseña es requerido'],
+    cedula: {
+        type: DataTypes.NUMBER
     },
-    img:{
-        type: String,
+    estado: {
+        type: DataTypes.BOOLEAN
     },
-    rol:{
-        type: String,
-        //required: true,
-        emun: ['ADMIN_ROLE', 'USER_ROLE']
-    },
-    estado:{
-        type: Boolean,
-        default: true
-    },
-    google:{
-        type: Boolean,
-        default: false
-    },
+    localidad: {
+        type: DataTypes.STRING
+    }
+})
 
-});
-
-UsuarioSchema.methods.toJSON =  function (){
-    const {__v, password, _id, ...usuario} = this.toObject();
-    usuario.uid = _id;
-    return usuario;
-}
-
-
-module.exports = model('Usuario', UsuarioSchema);
+module.exports = Usuario;

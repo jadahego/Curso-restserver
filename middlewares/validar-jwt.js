@@ -8,6 +8,7 @@ const usuario = require('../models/usuario');
 const validarJWT = async (req, res = response, next) => {
 
     const token = req.header = req.header('x-token');
+    //console.log("Google Token", token)
 
     if (!token){
         return res.status(401).json({
@@ -17,10 +18,10 @@ const validarJWT = async (req, res = response, next) => {
 
     try {
 
-       const {uid} =  jwt.verify(token, process.env.SECRETORPRIVATEKEY );
+       const {cedula} =  jwt.verify(token, process.env.SECRETORPRIVATEKEY );
 
        // leer el usuario que corresponde al uid 
-       const usuario = await Usuario.findById(uid);
+       const usuario = await Usuario.findOne(cedula);
 
        if(!usuario){
         return res.status(401).json({

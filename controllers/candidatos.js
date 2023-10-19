@@ -1,5 +1,6 @@
 const { response } = require("express");
-const {Categoria} = require('../models');
+const { Candidato, Usuario } = require('../models');
+
 
 // obtener categorias - paginado - total - populate
 const obtenerCategorias = async (req, res= response) => {
@@ -24,38 +25,54 @@ const obtenerCategorias = async (req, res= response) => {
 const obtenerCategoria = async (req, res = response) => {
 
     const {id} = req.params
-    const categoria = await Categoria.findById(id).populate('usuario', 'nombre')
+    const categoria = await Candidatos.findById(id).populate('usuario', 'nombre')
 
     res.json(categoria);
 }
 
-//Crear categorias 
-const crearCategoria = async (req, res=response) => {
+//crear candidato
+const crearCandidato = async (req, res = response) => {
 
-    const nombre = req.body.nombre.toUpperCase();
+    const {body} = req;
 
-    const categoriaDB = await Categoria.findOne({nombre});
+    try {
 
-    if (categoriaDB){
+    const personaEncontrada = await Usuario.findOne({ where: { cedula: body.cedula } })
+
+
+    if (!personaEncontrada){
         return res.status(400).json({
-            msg: `La categoria ${categoriaDB.nombre}, ya existe`
+            msg: 'No existe usuario con el Documento' + body.cedula
         })
     }
+    try {
+        const candidato =  await Candidato.create({
+            persona_id: personaEncontrada.id,
+            cedula: body.cedula,
+            partido: body.partido,
+          })
 
-    // Generar la data a guardar
-    const data = {
-        nombre,
-        usuario: req.usuario._id
+          res.json({candidato});
+
+           //guardar BD
+    await candidato.save();
+
+    } catch (error) {
+        return res.status(400).json({
+            msg: 'candidato ya se encuentra registrado con documento' + body.cedula
+        })
     }
-
-    const categoria = new Categoria(data);
-
-    // Guardar DB
-    await categoria.save();
-
-    res.status(201).json(categoria);
-
-}
+    
+      
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: 'Hable con el administarador'
+        })
+    }
+    
+  } 
+  
 
 // Actualizar categorias 
 const actualizarCategoria = async (req, res= response) => {
@@ -84,7 +101,7 @@ const borrarCategoria = async (req, res= response) =>{
 
 
 module.exports = {
-    crearCategoria,
+    crearCandidato,
     obtenerCategorias,
     obtenerCategoria,
     actualizarCategoria,

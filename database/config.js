@@ -1,28 +1,10 @@
-const mongoose = require('mongoose');
+const Sequelize = require("sequelize");
 
-const dbConnection = async () => {
-
-    try {
-        const dbParams = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-            useFindAndModify: false
-        }
-
-        console.log('DB params:', dbParams);
-        await mongoose.connect(process.env.MONGODB_ATLAS, dbParams);
-
-        console.log('base de datos online');
-
-    } catch (error) {
-        console.log(error);
-        throw new Error('Error a la hora de iniciar la base de datos');
-    }
-
-
-
-}
+const dbConnection = new Sequelize('mydb', 'jafed', 'Davidhg#8', {
+    host: 'localhost', //url servidor remoto caso tal
+    dialect: 'mysql',
+    //logging: false
+})
 
 
 module.exports = {

@@ -3,12 +3,13 @@ const { check } = require('express-validator');
 
 const {validarCampos} = require('../middlewares/validar-campos');
 const { validarJWT, esAdminRole } = require('../middlewares');
-const { crearCategoria, 
+const {
         obtenerCategorias,
         obtenerCategoria,
         actualizarCategoria,
-        borrarCategoria
- } = require('../controllers/categorias');
+        borrarCategoria,
+        crearCandidato
+ } = require('../controllers/candidatos');
 const { existeCategoriaPorId } = require('../helpers/db-validators');
 
 
@@ -34,20 +35,21 @@ router.get('/:id',[
     res.json('get-id')
 })
 
-// Crear categoria - privado - cualquier token valido
+// Crear candidato- privado - cualquier token valido
 router.post('/',[
-    validarJWT,
-    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    //validarJWT,
+    check('partido', 'El partido es obligatorio').not().isEmpty(),
+    check('cedula', 'El id de persona es obligatorio').not().isEmpty(),
     validarCampos
 ], 
-crearCategoria,
+crearCandidato,
 (req, res) => {
     res.json('post')
 })
 
 // Actualizar con id
 router.put('/:id',[
-    validarJWT,
+    //validarJWT,
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('id').custom(existeCategoriaPorId),
     validarCampos

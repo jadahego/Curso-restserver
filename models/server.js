@@ -3,16 +3,19 @@ const cors = require('cors');
 const fileUpload = require('express-fileupload')
 
 const { dbConnection } = require('../database/config');
+const { socketController } = require('../sockets/controller');
 
 class Server {
 
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
+        this.server = require('http').createServer(this.app)
+        this.io = require('socket.io')(this.server)
 
         this.usuariosPath = '/api/usuarios';
         this.authPath = '/api/auth';
-        this.categoriasPath = '/api/categorias';
+        this.candidatosPath = '/api/candidatos';
         this.productosPath = '/api/productos';
         this.buscarPath = '/api/buscar';
         this.uploadPath = '/api/uploads';
@@ -25,10 +28,18 @@ class Server {
 
         this.routes();
 
+        //socket io
+        this.sockets();
+
       }
 
      async conectarDB() {
-        await dbConnection();
+      try {
+        await dbConnection.authenticate()
+        console.log('database online')
+    } catch (error) {
+        console.log(error);
+    }
      }
 
       middlewares() {
@@ -53,16 +64,19 @@ class Server {
 
     routes(){
       this.app.use(this.authPath, require('../routes/auth'));
-      this.app.use(this.categoriasPath, require('../routes/categorias'));
+      this.app.use(this.candidatosPath, require('../routes/candidatos'));
       this.app.use(this.productosPath, require('../routes/productos'));
       this.app.use(this.usuariosPath, require('../routes/user'));
       this.app.use(this.buscarPath, require('../routes/buscar'));
       this.app.use(this.uploadPath, require('../routes/uploads'));
     }
     
+    sockets(){
+      this.io.on("connection",(socket) => socketController(socket, this.io)) 
+    }
 
     listen(){
-        this.app.listen(this.port, () => {
+        this.server.listen(this.port, () => {
             console.log(`Example app listening on port ${this.port}`)
           })
           
